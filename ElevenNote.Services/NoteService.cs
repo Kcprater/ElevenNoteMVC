@@ -27,6 +27,7 @@ namespace ElevenNote.Services
                     Content = model.Content,
                     CreatedUtc = DateTimeOffset.Now
                 };
+
             using (var ctx = new ApplicationDbContext())
             {
                 ctx.Notes.Add(entity);
@@ -49,7 +50,8 @@ namespace ElevenNote.Services
                                     Title = e.Title,
                                     CreatedUtc = e.CreatedUtc
                                 }
-                         );
+                        );
+
                 return query.ToArray();
             }
         }

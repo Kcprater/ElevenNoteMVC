@@ -1,6 +1,9 @@
 ﻿using ElevenNote.Models;
+using ElevenNote.Services;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,7 +16,10 @@ namespace ElevenNoteMVC.Controllers
         // GET: Note
         public ActionResult Index()
         {
-            var model = new NoteListItem[0];
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new NoteService(userId);
+            var model = service.GetNotes();
+
             return View(model);
         }
         public ActionResult Create()
@@ -24,11 +30,33 @@ namespace ElevenNoteMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(NoteCreate model)
         {
-            if (ModelState.IsValid)
-            {
+            if (!ModelState.IsValid) return View(model);
 
-            }
+            var service = CreateNoteService();
+
+            if (service.CreateNote(model))
+            {
+                TempData["SaveResult"] = "Your Note Was Created.";
+                return RedirectToAction("Index");
+            };
+
+            ModelState.AddModelError("", "Note Could Not Be Created");
+
             return View(model);
+        }
+        public ActionResult Details(int id)
+        {
+            var svc = CreateNoteService();
+            var model = svc.GetNoteById(id);
+
+            return View(model);
+        }
+
+        private NoteService CreateNoteService()
+        {
+            var userId = Guid.Parse(User.Identity.GetUserId());
+            var service = new NoteService(userId);
+            return service;
         }
     }
 }
