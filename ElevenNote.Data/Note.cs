@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,8 @@ namespace ElevenNote.Data
         [Display(Name = "Content")]
         [MaxLength(1000, ErrorMessage = "There are too many characters in this field.")]
         public string Content { get; set; }
-
+        [DefaultValue(false)]
+        public bool IsStarred { get; set; }
         [Required]
         [Display(Name = "Time Created")]
         public DateTimeOffset CreatedUtc { get; set; }
